@@ -18,6 +18,7 @@ AllCops:
     - 'config/spring.rb'
     - 'vendor/**/*'
     - 'bin/yarn'
+
 Style/Documentation:
   Enabled: false
 
