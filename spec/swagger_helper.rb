@@ -16,7 +16,7 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
     'v1/swagger.json' => {
-      openapi: '3.0.1',
+      openapi: '2.0',
       info: {
         title: 'API V1',
         version: 'v1'
@@ -41,3 +41,41 @@ RSpec.configure do |config|
   # Defaults to json. Accepts ':json' and ':yaml'.
   config.swagger_format = :json
 end
+
+
+def schema_data(schema)
+  schema(type: :object,
+         properties: {
+           data: {
+             type: :array,
+             items: schema
+           }
+         },
+         required: %w(data))
+end
+
+def schema_data_obj(schema)
+  schema(type: :object,
+         properties: {
+           data: schema
+         },
+         required: %w(data))
+end
+
+module Rswag::Specs::ExampleGroupHelpers
+  alias_method :run_test_orig!, :run_test!
+
+  def run_test!(&block)
+    run_test_orig!(&block)
+  end
+end
+
+def run_test_with_example!(&block)
+  after do |example|
+      example.metadata[:response][:examples] = {
+        'application/json' => JSON.parse(response.body, symbolize_names: true)
+      }
+  end
+  run_test! &block
+end
+

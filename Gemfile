@@ -26,6 +26,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # gem 'rack-cors'
 gem 'rswag-api', '2.10.1'
 gem 'rswag-ui', '2.10.1'
+gem 'dotenv-rails', '2.8.1'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

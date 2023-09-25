@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= Rails.application.credentials[Rails.env.to_sym][:postgresql][:DB_HOST] %>
+  port: <%= Rails.application.credentials[Rails.env.to_sym][:postgresql][:DB_PORT] %>
+  username: <%= Rails.application.credentials[Rails.env.to_sym][:postgresql][:DB_USER] %>
+  password: <%= Rails.application.credentials[Rails.env.to_sym][:postgresql][:DB_PASSWORD] %>
+  pool: 5
+
+development:
+  <<: *default
+  database: rps_development
+
+test:
+  <<: *default
+  database: rps_test
+
+production:
+  <<: *default
+  database: rps_production
