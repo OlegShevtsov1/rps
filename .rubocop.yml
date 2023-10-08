@@ -35,3 +35,9 @@ Metrics/BlockLength:
 RSpec/NestedGroups:
   Exclude:
     - 'spec/**/*'
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/EmptyExampleGroup:
+  Enabled: false

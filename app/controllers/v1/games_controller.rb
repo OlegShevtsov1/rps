@@ -6,7 +6,7 @@ module V1
     end
 
     def create
-      render json: data_payload(Games::PlayService.new(params[:option]).call), status: :ok
+      render json: data_payload(Games::PlayService.new(params[:player_option]).call), status: :ok
     end
   end
 end

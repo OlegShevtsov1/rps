@@ -8,6 +8,7 @@ require File.expand_path('../config/environment', __dir__)
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
+require 'rswag/specs'
 
 Dir[Rails.root.join('spec/support/*.rb')].sort.each { |f| require f }
 Dir[Rails.root.join('spec/docs/**/*.rb')].sort.each { |file| require file }
@@ -19,6 +20,7 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 RSpec.configure do |config|
+  config.include Helpers::GenericHelpers
   config.fixture_path = Rails.root.join('spec/fixtures').to_s
 
   config.use_transactional_fixtures = true

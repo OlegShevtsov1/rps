@@ -2,6 +2,12 @@ module Games
   class PlayService
     OPTIONS = { rock: 'rock', paper: 'paper', scissors: 'scissors' }.freeze
 
+    PLAYER_WINNER_CASES = [
+      { 'player' => OPTIONS[:rock], 'computer' => OPTIONS[:scissors] },
+      { 'player' => OPTIONS[:paper], 'computer' => OPTIONS[:rock] },
+      { 'player' => OPTIONS[:scissors], 'computer' => OPTIONS[:paper] }
+    ].freeze
+
     def initialize(player_option)
       @player_option = player_option
     end
@@ -13,39 +19,72 @@ module Games
         raise Errors::V1::CustomError.new(422, message)
       end
 
-      options_payload.merge(winner)
+      populate_additional_options
+      game_options_payload.merge(winner)
     end
 
     private
 
     def computer_option
-      @_computer_option ||= OPTIONS.map { |_key, value| value }.sample
+      @computer_option ||= OPTIONS.map { |_key, value| value }.sample
     end
 
     def winner
-      case [@player_option, computer_option]
-      # TODO: add rules in case of additional options
-      when [options[:rock], options[:scissors]], [options[:paper], options[:rock]], [options[:scissors], options[:paper]]
-        { result: 'Player is winner' }
-      when [options[:rock], options[:paper]], [options[:paper], options[:scissors]], [options[:scissors], options[:rock]]
-        { result: 'Computer is winner' }
-      else
-        { result: 'Computer and you have the same option' }
-      end
+      return { result: 'Computer and you have the same option' } if @player_option == computer_option
+      return { result: 'Player is winner' } if player_winner?
+
+      { result: 'Computer is winner' }
     end
 
-    def options_payload
+    def player_winner?
+      winner_cases = []
+
+      player_winner_cases.each do |winner_case|
+        winner_cases << true if winner_case['player'] == @player_option && winner_case['computer'] == computer_option
+      end
+
+      true if winner_cases.any?
+    end
+
+    def game_options_payload
       { player_option: @player_option, computer_option: computer_option }
     end
 
     def options
-      @_options = OPTIONS.merge(additional_options)
+      options = OPTIONS.merge(@additional_options) if @additional_options.present?
+
+      @options ||= options || OPTIONS
     end
 
-    def additional_options
-      return unless ENV['ADDITIONAL_OPTIONS'].present?
+    def player_winner_cases
+      cases = PLAYER_WINNER_CASES + @additional_player_winner_cases if @additional_player_winner_cases.present?
 
-      ENV['ADDITIONAL_OPTIONS'].split(',').map { |option| [option, option] }.to_h
+      @player_winner_cases ||= cases || PLAYER_WINNER_CASES
+    end
+
+    def populate_additional_options
+      return if ENV['ADDITIONAL_OPTIONS'].blank?
+
+      begin
+        json = JSON.parse(ENV.fetch('ADDITIONAL_OPTIONS', nil))
+      rescue JSON::ParserError
+        raise Errors::V1::CustomError.new(422, 'Invalid additional options format')
+      end
+
+      @additional_options = json.to_h { |option, _winner_cases| [option.downcase.to_sym, option.downcase] }
+      @additional_player_winner_cases = additional_player_winner_cases(json)
+    end
+
+    def additional_player_winner_cases(json)
+      winner_cases_result = []
+
+      json.each do |option, computer_cases|
+        computer_cases.each do |computer_case|
+          winner_cases_result << { 'player' => option.downcase, 'computer' => computer_case.downcase }
+        end
+      end
+
+      winner_cases_result
     end
   end
 end
