@@ -8,12 +8,4 @@ class Game
     },
     required: %w(player_option computer_option result)
   }.freeze
-
-  SCHEMA_ERROR= {
-    type: :object,
-    properties: {
-      message: { type: :string },
-    },
-    required: %w(message)
-  }.freeze
 end
