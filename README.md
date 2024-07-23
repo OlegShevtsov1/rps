@@ -5,20 +5,24 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+* Ruby version <br>
+  ruby 2.7.1
 
-* System dependencies
+* Demo App
+  http://rps.up.km.ua/
 
-* Configuration
+## Rules
 
-* Database creation
+Rock beats scissors
+Scissors beats paper
+Paper beats rock
+Identical throws tie (rock == rock, etc.)
 
-* Database initialization
+## Functionality
 
-* How to run the test suite
+### API:
+http://rps.up.km.ua/api-docs
 
-* Services (job queues, cache servers, search engines, etc.)
+## Example:
 
-* Deployment instructions
-
-* ...
+* curl --location --request POST 'localhost:3000/v1/games?option=rock'

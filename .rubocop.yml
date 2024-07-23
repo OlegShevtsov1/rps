@@ -1,0 +1,43 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.7.1
+  Exclude:
+    - 'bin/bundle'
+    - 'bin/rails'
+    - 'bin/rake'
+    - "db/schema.rb"
+    - "db/migrate/*"
+    - 'config/environments/*'
+    - 'config/initializers/*'
+    - 'config/puma.rb'
+    - 'config/spring.rb'
+    - 'vendor/**/*'
+    - 'bin/yarn'
+
+Style/Documentation:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+RSpec/NestedGroups:
+  Exclude:
+    - 'spec/**/*'
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/EmptyExampleGroup:
+  Enabled: false
